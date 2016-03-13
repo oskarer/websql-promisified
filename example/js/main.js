@@ -6,19 +6,16 @@ const time = new Date().toISOString();
 
 (async function () {
   try {
-    const queries = [
-      { query: 'DROP TABLE IF EXISTS logs' },
-      { query: 'CREATE TABLE IF NOT EXISTS logs (log)'},
-      { query: 'INSERT INTO logs (log) VALUES (?)', args: [time] },
-      { query: 'SELECT * FROM logs'},
-    ];
-
     const websqlPromise = websql(db);
 
-    const results = await websqlPromise.transaction((tx) => {
+    const results = await websqlPromise.transaction(async (tx) => {
       tx.executeSql('DROP TABLE IF EXISTS logs')
       tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)')
-      tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time])
+      const insert =
+        await tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time])
+      console.log('Inserted at', insert.insertId)
+      const select = await tx.executeSql('SELECT * FROM logs')
+      console.log('Selected', select.rows.item(0))        
     })
 
     const results2 = await websqlPromise.transaction((tx) => {

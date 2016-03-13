@@ -54,6 +54,8 @@
 	
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 	
+	var _this = undefined;
+	
 	var _websql = __webpack_require__(72);
 	
 	var _websql2 = _interopRequireDefault(_websql);
@@ -63,50 +65,79 @@
 	var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
 	var time = new Date().toISOString();
 	
-	(0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-	  var queries, websqlPromise, results, results2;
-	  return _regenerator2.default.wrap(function _callee$(_context) {
+	(0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+	  var websqlPromise, results, results2;
+	  return _regenerator2.default.wrap(function _callee2$(_context2) {
 	    while (1) {
-	      switch (_context.prev = _context.next) {
+	      switch (_context2.prev = _context2.next) {
 	        case 0:
-	          _context.prev = 0;
-	          queries = [{ query: 'DROP TABLE IF EXISTS logs' }, { query: 'CREATE TABLE IF NOT EXISTS logs (log)' }, { query: 'INSERT INTO logs (log) VALUES (?)', args: [time] }, { query: 'SELECT * FROM logs' }];
+	          _context2.prev = 0;
 	          websqlPromise = (0, _websql2.default)(db);
-	          _context.next = 5;
+	          _context2.next = 4;
+	          return websqlPromise.transaction(function () {
+	            var ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(tx) {
+	              var insert, select;
+	              return _regenerator2.default.wrap(function _callee$(_context) {
+	                while (1) {
+	                  switch (_context.prev = _context.next) {
+	                    case 0:
+	                      tx.executeSql('DROP TABLE IF EXISTS logs');
+	                      tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)');
+	                      _context.next = 4;
+	                      return tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time]);
+	
+	                    case 4:
+	                      insert = _context.sent;
+	
+	                      console.log('Inserted at', insert.insertId);
+	                      _context.next = 8;
+	                      return tx.executeSql('SELECT * FROM logs');
+	
+	                    case 8:
+	                      select = _context.sent;
+	
+	                      console.log('Selected', select.rows.item(0));
+	
+	                    case 10:
+	                    case 'end':
+	                      return _context.stop();
+	                  }
+	                }
+	              }, _callee, _this);
+	            }));
+	            return function (_x) {
+	              return ref.apply(this, arguments);
+	            };
+	          }());
+	
+	        case 4:
+	          results = _context2.sent;
+	          _context2.next = 7;
 	          return websqlPromise.transaction(function (tx) {
-	            tx.executeSql('DROP TABLE IF EXISTS logs');
-	            tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)');
 	            tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time]);
 	          });
 	
-	        case 5:
-	          results = _context.sent;
-	          _context.next = 8;
-	          return websqlPromise.transaction(function (tx) {
-	            tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time]);
-	          });
-	
-	        case 8:
-	          results2 = _context.sent;
+	        case 7:
+	          results2 = _context2.sent;
 	
 	
 	          console.log(results);
 	          console.log(results2);
-	          _context.next = 16;
+	          _context2.next = 15;
 	          break;
 	
-	        case 13:
-	          _context.prev = 13;
-	          _context.t0 = _context['catch'](0);
+	        case 12:
+	          _context2.prev = 12;
+	          _context2.t0 = _context2['catch'](0);
 	
-	          console.log(_context.t0.message);
+	          console.log(_context2.t0.message);
 	
-	        case 16:
+	        case 15:
 	        case 'end':
-	          return _context.stop();
+	          return _context2.stop();
 	      }
 	    }
-	  }, _callee, this, [[0, 13]]);
+	  }, _callee2, this, [[0, 12]]);
 	}))();
 
 /***/ },
@@ -2562,8 +2593,11 @@
 	
 	  return {
 	    executeSql: function executeSql(query, args) {
-	      _this2.tx.executeSql(query, args, function (tx, result) {
-	        _this2.results.push(result);
+	      return new _promise2.default(function (resolve) {
+	        _this2.tx.executeSql(query, args, function (tx, result) {
+	          _this2.results.push(result);
+	          resolve(result);
+	        });
 	      });
 	    }
 	  };
