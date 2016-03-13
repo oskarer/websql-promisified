@@ -13,7 +13,7 @@ const time = new Date().toISOString();
       { query: 'SELECT * FROM logs'},
     ];
 
-    const websqlPromise = new websql(db);
+    const websqlPromise = websql(db);
 
     const results = await websqlPromise.transaction((tx) => {
       tx.executeSql('DROP TABLE IF EXISTS logs')
@@ -21,8 +21,12 @@ const time = new Date().toISOString();
       tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time])
     })
 
+    const results2 = await websqlPromise.transaction((tx) => {
+      tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time])
+    })
 
     console.log(results)
+    console.log(results2)
   } catch (error) {
     console.log(error.message);
   }

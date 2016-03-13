@@ -64,14 +64,14 @@
 	var time = new Date().toISOString();
 	
 	(0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-	  var queries, websqlPromise, results;
+	  var queries, websqlPromise, results, results2;
 	  return _regenerator2.default.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
 	        case 0:
 	          _context.prev = 0;
 	          queries = [{ query: 'DROP TABLE IF EXISTS logs' }, { query: 'CREATE TABLE IF NOT EXISTS logs (log)' }, { query: 'INSERT INTO logs (log) VALUES (?)', args: [time] }, { query: 'SELECT * FROM logs' }];
-	          websqlPromise = new _websql2.default(db);
+	          websqlPromise = (0, _websql2.default)(db);
 	          _context.next = 5;
 	          return websqlPromise.transaction(function (tx) {
 	            tx.executeSql('DROP TABLE IF EXISTS logs');
@@ -81,24 +81,32 @@
 	
 	        case 5:
 	          results = _context.sent;
+	          _context.next = 8;
+	          return websqlPromise.transaction(function (tx) {
+	            tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time]);
+	          });
+	
+	        case 8:
+	          results2 = _context.sent;
 	
 	
 	          console.log(results);
-	          _context.next = 12;
+	          console.log(results2);
+	          _context.next = 16;
 	          break;
 	
-	        case 9:
-	          _context.prev = 9;
+	        case 13:
+	          _context.prev = 13;
 	          _context.t0 = _context['catch'](0);
 	
 	          console.log(_context.t0.message);
 	
-	        case 12:
+	        case 16:
 	        case 'end':
 	          return _context.stop();
 	      }
 	    }
-	  }, _callee, this, [[0, 9]]);
+	  }, _callee, this, [[0, 13]]);
 	}))();
 
 /***/ },
@@ -2520,42 +2528,46 @@
 	
 	var _promise2 = _interopRequireDefault(_promise);
 	
-	exports.default = websqlPromisify;
+	var _create = __webpack_require__(35);
+	
+	var _create2 = _interopRequireDefault(_create);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function websqlPromisify(db) {
-	  this.db = db;
-	}
+	exports.default = function (db) {
+	  return (0, _create2.default)(prototype, { db: { value: db } });
+	};
+	
+	var prototype = {
+	  transaction: function transaction(_transaction) {
+	    var _this = this;
+	
+	    this.results = [];
+	    return new _promise2.default(function (resolve, reject) {
+	      _this.db.transaction(function (tx) {
+	        _this.tx = tx;
+	        _transaction(fakeTransaction.call(_this));
+	      }, function (error) {
+	        reject(error);
+	      }, function (result) {
+	        resolve(_this.results);
+	      });
+	    });
+	  }
+	
+	};
 	
 	function fakeTransaction() {
-	  var _this = this;
+	  var _this2 = this;
 	
 	  return {
 	    executeSql: function executeSql(query, args) {
-	      console.log(_this, query, args);
-	      _this.tx.executeSql(query, args, function (tx, result) {
-	        _this.results.push(result);
+	      _this2.tx.executeSql(query, args, function (tx, result) {
+	        _this2.results.push(result);
 	      });
 	    }
 	  };
 	}
-	
-	websqlPromisify.prototype.transaction = function (transaction) {
-	  var _this2 = this;
-	
-	  return new _promise2.default(function (resolve, reject) {
-	    _this2.results = [];
-	    _this2.db.transaction(function (tx) {
-	      _this2.tx = tx;
-	      transaction(fakeTransaction.call(_this2));
-	    }, function (error) {
-	      reject(error);
-	    }, function (result) {
-	      resolve(_this2.results);
-	    });
-	  });
-	};
 
 /***/ }
 /******/ ]);
