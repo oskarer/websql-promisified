@@ -11,11 +11,13 @@ const time = new Date().toISOString();
     const results = await websqlPromise.transaction(async (tx) => {
       tx.executeSql('DROP TABLE IF EXISTS logs')
       tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)')
+
       const insert =
         await tx.executeSql('INSERT INTO logs (log) VALUES (?)', [time])
       console.log('Inserted at', insert.insertId)
+
       const select = await tx.executeSql('SELECT * FROM logs')
-      console.log('Selected', select.rows.item(0))        
+      console.log('Selected', select.rows.item(0))
     })
 
     const results2 = await websqlPromise.transaction((tx) => {
