@@ -6,7 +6,8 @@ module.exports = {
   entry: path.resolve(src_dir, 'index.js'),
   output: {
     path: dist_dir,
-    filename: 'websql.js'
+    filename: 'websql.js',
+    libraryTarget: 'umd',
   },
   module: {
     loaders: [
