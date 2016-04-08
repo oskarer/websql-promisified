@@ -1,6 +1,6 @@
 {
   "name": "websql-promisified",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Oskar Eriksson",
   "license": "MIT",
   "main": "dist/websql.js",

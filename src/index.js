@@ -1,13 +1,13 @@
 function fakeTransaction() {
   return {
     executeSql: (query, args) =>
-    new Promise((resolve) => {
-      this.tx.executeSql(query, args,
-        (tx, result) => {
-          this.results.push(result);
-          resolve(result);
-        });
-    }),
+      new Promise((resolve) => {
+        this.tx.executeSql(query, args,
+          (tx, result) => {
+            this.results.push(result);
+            resolve(result);
+          });
+      }),
   };
 }
 
