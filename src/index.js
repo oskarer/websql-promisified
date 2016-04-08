@@ -31,4 +31,6 @@ const prototype = {
   },
 };
 
-export default (db) => Object.create(prototype, { db: { value: db } });
+export default function websql(db) {
+  return Object.create(prototype, { db: { value: db } });
+}

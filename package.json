@@ -1,6 +1,6 @@
 {
   "name": "websql-promisified",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Oskar Eriksson",
   "license": "MIT",
   "main": "dist/websql.js",
@@ -28,5 +28,24 @@
   "scripts": {
     "build": "webpack -p",
     "test": "karma start"
-  }
+  },
+  "description": "Use Web SQL and Cordova SQLite with ES6 promises.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oskarer/websql-promisified.git"
+  },
+  "keywords": [
+    "websql",
+    "sqlite",
+    "promise",
+    "promisified",
+    "es6",
+    "async",
+    "await",
+    "async/await"
+  ],
+  "bugs": {
+    "url": "https://github.com/oskarer/websql-promisified/issues"
+  },
+  "homepage": "https://github.com/oskarer/websql-promisified#readme"
 }
