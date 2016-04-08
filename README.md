@@ -1,6 +1,6 @@
 # websql-promisified
 
-[![Build Status](https://travis-ci.org/oskarer/skype-js.svg?branch=master)](https://travis-ci.org/oskarer/skype-js)
+[![Build Status](https://travis-ci.org/oskarer/websql-promisified.svg?branch=master)](https://travis-ci.org/oskarer/websql-promisified)
 [![npm version](https://badge.fury.io/js/websql-promisified.svg)](https://badge.fury.io/js/websql-promisified)
 
 Use Web SQL and
