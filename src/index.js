@@ -1,10 +1,10 @@
-function fakeTransaction() {
+function fakeTransaction(results) {
   return {
     executeSql: (query, args) =>
       new Promise((resolve) => {
         this.tx.executeSql(query, args,
           (tx, result) => {
-            this.results.push(result);
+            results.push(result);
             resolve(result);
           });
       }),
@@ -19,14 +19,14 @@ const prototype = {
       });
     }
 
-    this.results = [];
     return new Promise((resolve, reject) => {
+      const results = [];
       this.db.transaction((tx) => {
         this.tx = tx;
-        transaction(fakeTransaction.call(this));
+        transaction(fakeTransaction.call(this, results));
       },
       (error) => { reject(error); },
-      () => { resolve(this.results); });
+      () => { resolve(results); });
     });
   },
 };
