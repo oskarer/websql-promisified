@@ -23,9 +23,7 @@ const websqlPromise = websql(db);
 
 websqlPromise.transaction((tx) => {
   tx.executeSql('INSERT INTO someTable (someColumn) VALUES (?)', ['a']);
-  tx.executeSql('SELECT * FROM someTable').then((result) => {
-    // Do something, another tx.executeSql if you like
-  })
+  tx.executeSql('SELECT * FROM someTable');
 }).then((results) => {
   // Do something with results array
 }).catch((error) => {
@@ -42,10 +40,9 @@ const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
 const websqlPromise = websql(db);
 
 try {
-  const results = await websqlPromise.transaction(await (tx) => {
-    await tx.executeSql('INSERT INTO someTable (someColumn) VALUES (?)', ['a']);
-    const subResult = await tx.executeSql('SELECT * FROM someTable');
-    // Do something, another tx.executeSql if you like
+  const results = await websqlPromise.transaction((tx) => {
+    tx.executeSql('INSERT INTO someTable (someColumn) VALUES (?)', ['a']);
+    tx.executeSql('SELECT * FROM someTable');
   })
   // Do something with results array
 } catch (error) {
