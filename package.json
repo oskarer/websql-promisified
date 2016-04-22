@@ -1,6 +1,6 @@
 {
   "name": "websql-promisified",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": "Oskar Eriksson",
   "license": "MIT",
   "main": "dist/websql.js",
@@ -37,9 +37,14 @@
   "keywords": [
     "websql",
     "sqlite",
+    "transaction",
     "promise",
     "promisified",
     "es6",
+    "es7",
+    "then",
+    "catch",
+    "then/catch",
     "async",
     "await",
     "async/await"
