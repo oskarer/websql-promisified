@@ -5,7 +5,7 @@
 
 Use Web SQL and
 [Cordova SQLite](https://github.com/litehelpers/Cordova-sqlite-storage) with
-ES6 promises.
+ES6 promises. This is a very slim wrapper, minified size is only 1kb.
 
 ## Installation
 ```bash
@@ -75,7 +75,7 @@ try {
     });
     tx.executeSql('SELECT * FROM someTable');
   })
-  
+
   console.log(results[1].rows.item(0).someColumn) // a
   console.log(results[3].rows.item(0).someColumn) // aa
 
