@@ -79,6 +79,7 @@ describe('index', () => {
       const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
       const websqlPromise = websql(db);
 
+      // Fill database
       await new Promise((resolve, reject) => {
         db.transaction((tx) => {
           tx.executeSql('DROP TABLE IF EXISTS logs');
@@ -136,6 +137,80 @@ describe('index', () => {
           done();
         }
       }));
+
+
+      describe('callback', () => {
+        beforeEach(asyncTest(async (done) => {
+          const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+          // Fill database
+          await new Promise((resolve, reject) => {
+            db.transaction((tx) => {
+              tx.executeSql('DROP TABLE IF EXISTS logs');
+              tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)');
+              tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['hello1']);
+              tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['hello2']);
+              tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['hello3']);
+            }, reject, resolve);
+          });
+          done();
+        }));
+
+        it('should be called with tx that has correct executeSql',
+        asyncTest(async (done) => {
+          const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+          const websqlPromise = websql(db);
+
+          await websqlPromise.transaction((tx) => {
+            tx.executeSql('SELECT * from logs WHERE log = "hello1"', [],
+              (chainTx) => {
+                // Not the _same_ function since fakeTransaction returns new
+                // instance, but the implementation should be the same.
+                // Not perfect solution but it' i's something.
+                expect(chainTx.executeSql.toString())
+                  .toEqual(tx.executeSql.toString());
+                done();
+              });
+          });
+        }));
+
+        it('should be called with correct result',
+        asyncTest(async (done) => {
+          const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+          const websqlPromise = websql(db);
+
+          await websqlPromise.transaction((tx) => {
+            tx.executeSql('SELECT * from logs WHERE log = "hello1"', [],
+              (tx, result) => {
+                expect(result.rows.item(0).log).toEqual('hello1');
+                done();
+              });
+          });
+        }));
+
+        it('should support nested callbacks with results in correct order',
+        asyncTest(async (done) => {
+          const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
+          const websqlPromise = websql(db);
+
+          const result = await websqlPromise.transaction((tx) => {
+            tx.executeSql('SELECT * from logs WHERE log = "hello1"', [],
+            (tx) => {
+              tx.executeSql('SELECT * from logs WHERE log = "hello2"', [],
+              (tx) => {
+                tx.executeSql('SELECT * from logs WHERE log = "hello3"');
+              });
+            });
+          });
+
+          expect(result[0].rows.item(0).log).toEqual('hello1');
+          expect(result[0].rows.length).toBe(1);
+          expect(result[1].rows.item(0).log).toEqual('hello2');
+          expect(result[1].rows.length).toBe(1);
+          expect(result[2].rows.item(0).log).toEqual('hello3');
+          expect(result[2].rows.length).toBe(1);
+          done();
+        }));
+      });
     });
   });
 });

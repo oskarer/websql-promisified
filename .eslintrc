@@ -1,11 +1,12 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": "airbnb/base",
   "env": {
     "jasmine": true,
     "browser": true,
   },
   "rules": {
-    "func-names": 0
+    "func-names": 0,
+    "no-shadow": 0
   }
 }
