@@ -136,52 +136,6 @@ describe('index', () => {
           done();
         }
       }));
-
-      it('should resolve its promise with result when query is valid',
-      asyncTest(async (done) => {
-        const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-        const websqlPromise = websql(db);
-
-        // Set up table
-        await new Promise((resolve, reject) => {
-          db.transaction((tx) => {
-            tx.executeSql('DROP TABLE IF EXISTS logs');
-            tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)');
-            tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['hello']);
-          }, reject, resolve);
-        });
-
-        await websqlPromise.transaction(async (tx) => {
-          const result = await tx.executeSql('SELECT * FROM logs');
-          expect(result.rows.length).toBe(1);
-          expect(result.rows.item(0).log).toEqual('hello');
-          done();
-        });
-      }));
-
-      it('should be possible to await several calls',
-      asyncTest(async (done) => {
-        const db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024);
-        const websqlPromise = websql(db);
-
-        // Set up table
-        await new Promise((resolve, reject) => {
-          db.transaction((tx) => {
-            tx.executeSql('DROP TABLE IF EXISTS logs');
-            tx.executeSql('CREATE TABLE IF NOT EXISTS logs (log)');
-          }, reject, resolve);
-        });
-
-        const result = await websqlPromise.transaction(async (tx) => {
-          await tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['a']);
-          await tx.executeSql('INSERT INTO logs (log) VALUES (?)', ['b']);
-          await tx.executeSql('SELECT * FROM logs');
-        });
-
-        expect(result[2].rows.item(0)).toEqual({ log: 'a' });
-        expect(result[2].rows.item(1)).toEqual({ log: 'b' });
-        done();
-      }));
     });
   });
 });
