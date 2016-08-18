@@ -251,7 +251,9 @@ describe('index', () => {
             tx.executeSql('SELECT * from nonExistingTable', [],
               () => {},
               (tx, error) => {
-                expect(error.constructor.name).toEqual('SQLError');
+                expect(error.message)
+                  .toEqual('could not prepare statement (1 no such table: ' +
+                  'nonExistingTable)');
                 done();
               });
           });
@@ -273,7 +275,9 @@ describe('index', () => {
             });
           });
 
-          expect(result[0].constructor.name).toEqual('SQLError');
+          expect(result[0].message)
+            .toEqual('could not prepare statement (1 no such table: ' +
+            'nonExistingTable)');
           expect(result[1].rows.item(0).log).toEqual('hello2');
           expect(result[1].rows.length).toBe(1);
           expect(result[2].rows.item(0).log).toEqual('hello3');
@@ -299,7 +303,9 @@ describe('index', () => {
           });
         });
 
-        expect(result[0].constructor.name).toEqual('SQLError');
+        expect(result[0].message)
+          .toEqual('could not prepare statement (1 no such table: ' +
+          'nonExistingTable)');
         expect(result[1].rows.item(0).log).toEqual('hello2');
         expect(result[1].rows.length).toBe(1);
         expect(result[2].rows.item(0).log).toEqual('hello3');
