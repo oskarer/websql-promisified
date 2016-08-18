@@ -1,12 +1,21 @@
 function fakeTransaction(results) {
   return {
-    executeSql: (query, args, callback) => {
-      this.tx.executeSql(query, args, (tx, result) => {
+    executeSql: (query, args, callback, errorCallback) => {
+      this.tx.executeSql(query, args, 
+      (tx, result) => {
         results.push(result);
         if (typeof callback === 'function') {
           // Pass itself to support chaining
           callback(fakeTransaction.call(this, results), result);
         }
+      },
+      (tx, error) => {
+        results.push(error);
+        if (typeof errorCallback === 'function') {
+          // Pass itself to support chaining
+          return errorCallback(fakeTransaction.call(this, results), error);
+        }
+        return true;
       });
     },
   };
